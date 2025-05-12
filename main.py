@@ -45,3 +45,65 @@ def play_card(hand, lead_suit=None):
     chosen_card = valid_cards[0]
     hand.remove(chosen_card)
     return chosen_card
+
+# === Game Loop ===
+round_number = 1
+max_rounds = 16
+
+while round_number <= max_rounds:
+    print(f"\n====== Round {round_number} ======")
+    print(f"{leader} will lead this round.")
+
+    # Player moves
+    if leader == "Player 1":
+        p1_card = play_card(player1_hand)
+        print(f"Player 1 plays: {p1_card['value']} of {p1_card['suit']}")
+        p2_card = play_card(player2_hand, lead_suit=p1_card["suit"])
+        print(f"Player 2 plays: {p2_card['value']} of {p2_card['suit']}")
+        lead_suit = p1_card["suit"]
+    else:
+        p2_card = play_card(player2_hand)
+        print(f"Player 2 plays: {p2_card['value']} of {p2_card['suit']}")
+        p1_card = play_card(player1_hand, lead_suit=p2_card["suit"])
+        print(f"Player 1 plays: {p1_card['value']} of {p1_card['suit']}")
+        lead_suit = p2_card["suit"]
+
+    # Decide winner
+    if p1_card["suit"] == lead_suit and p2_card["suit"] != lead_suit:
+        player1_score += 1
+        leader = "Player 1"
+        winner = "Player 1"
+    elif p2_card["suit"] == lead_suit and p1_card["suit"] != lead_suit:
+        player2_score += 1
+        leader = "Player 2"
+        winner = "Player 2"
+    else:
+        if get_card_value(p1_card) > get_card_value(p2_card):
+            player1_score += 1
+            leader = "Player 1"
+            winner = "Player 1"
+        else:
+            player2_score += 1
+            leader = "Player 2"
+            winner = "Player 2"
+
+    print(f"{winner} wins this round!")
+    print(f"Score: Player 1 = {player1_score} | Player 2 = {player2_score}")
+
+    # Reveal a card from deck
+    if len(game_deck) > 0:
+        revealed = deck.draw_cards(game_deck, 1)[0]
+        print(f"Revealed card from deck: {revealed['value']} of {revealed['suit']}")
+
+    # Check for mid-game re-deal
+    if len(player1_hand) == 4 and len(player2_hand) == 4 and len(game_deck) >= 8:
+        print("\nRe-dealing 4 cards to each player...")
+        player1_hand += deck.draw_cards(game_deck, 4)
+        player2_hand += deck.draw_cards(game_deck, 4)
+
+    # Early game end check
+    if (player1_score >= 9 and player2_score > 0) or (player2_score >= 9 and player1_score > 0):
+        print("\nGame ends early — someone reached 9 and the other can't catch up.")
+        break
+
+    round_number += 1
