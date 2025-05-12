@@ -107,3 +107,16 @@ while round_number <= max_rounds:
         break
 
     round_number += 1
+
+# === End of Game Summary ===
+print("\n====== Game Over ======")
+if player1_score == 0:
+    print("Player 1 shot the moon! Final score: Player 1 = 17 | Player 2 = 0")
+elif player2_score == 0:
+    print("Player 2 shot the moon! Final score: Player 1 = 0 | Player 2 = 17")
+elif player1_score > player2_score:
+    print(f"Player 1 wins! Final score: {player1_score} to {player2_score}")
+elif player2_score > player1_score:
+    print(f"Player 2 wins! Final score: {player2_score} to {player1_score}")
+else:
+    print("It’s a tie!")
